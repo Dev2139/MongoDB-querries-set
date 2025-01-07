@@ -139,3 +139,269 @@ db.students.find({ coursesEnrolled: { $in: ["CS101", "MATH202"] } });
 
 ```js
 db.students.find({ department: "Computer Science" });
+```
+
+
+## Task 11: Query students who are in their 3rd year;
+
+**Retrieve students who are in their 3rd year using the year field.
+
+```js
+db.students.find({ year: 3 });
+```
+
+
+## Task 12: Query students using a range for their year
+
+**Find all students who are in 2nd or 3rd year by using the $gte operator.
+
+```js
+db.students.find({ year: { $gte: 2 } });
+```
+
+
+## Task 13: Count the total number of students in each department
+
+**Use the $group stage of aggregation to group students by department and count them.
+
+```js
+db.students.aggregate([
+  {
+    $group: { _id: "$department", count: { $sum: 1 } };
+  };
+]);
+```
+
+
+## Task 14: Group courses by credits
+
+**Group courses by their credit value and count how many courses there are for each credit value.
+
+```js
+db.courses.aggregate([
+  {
+    $group: { _id: "$credits", count: { $sum: 1 }};
+  };
+]);
+```
+
+
+## Task 15: Find the highest credit course
+
+**Query for the course with the highest number of credits using the $sort operator.
+
+```js
+db.courses.findOne({ $sort: { credits: -1 } });
+```
+
+
+## Task 16: Use the $and operator for filtering students
+
+**Find all students who belong to the CSE department and are enrolled in more than 2 courses.
+
+```js
+db.students.find( { department: "Computer Science", coursesEnrolled: { $gt: 2}});
+```
+
+
+## Task 17: Add a new field to all documents in the students collection
+
+**Add a new field activeStatus and set it to true for all students.
+
+```js
+db.students.updateMany( {}, { $set: { activeStatus: true}});
+```
+
+
+## Task 18: Use $rename to rename a field
+
+**Rename the coursesEnrolled field in the students collection to enrolledCourses.
+
+```js
+db.students.updateMany( {}, { $rename: {coursesEnrolled: "enrolledCourses"}});
+```
+
+
+## Task 19: Set default values for new fields in all student documents;
+
+**Add a field graduationYear with a default value for all students.
+
+```js
+db.students.updateMany( {}, { $set: {graduationYear: 2028}});
+```
+
+
+## Task 20: Use the $push operator to add a new course to a student’s course list
+
+**Add the course "CS303" to Mahir’s coursesEnrolled list.
+
+```js
+db.students.updateOne( {name:: "Mahir"}, { $push: {enrolledCourses: "CS303"}});
+```
+
+
+## Task 21: Use $pull to remove a course from a student's courses list
+
+**Remove the course CS101 from Jenil’s list.
+
+```js
+db.students.updateOne( {name:"Jenil"}, { $pull: {enrolledCourses: "CS101"}});
+```
+
+
+## Task 22: Remove a student from the students collection
+
+**Delete the student record with roll number CS1004.
+
+```js
+db.students.deleteOne( {rollNumber: "CS1004"});
+```
+
+
+## Task 23: Find students who are enrolled in both CS101 and MATH202
+
+**Use $all operator to find students who are enrolled in both courses.
+
+```js
+db.students.find( {enrolledCourses: { $all: ["CS101", "Math202"]}});
+```
+
+
+## Task 24: Use $regex to search for students whose name starts with "A"
+
+**Use regular expressions to search for students whose names begin with the letter "A".
+
+```js
+db.students.find( {name: /A/});
+```
+
+
+## Task 25: Use $exists to find students with enrolled courses
+
+**Query students who have an entry in the coursesEnrolled array.
+
+```js
+db.students.find( {enrolledCourses: { $exists: true}});
+```
+
+
+## Task 26: Add a field to store students' grades for each course
+
+**Add a new field grades to the students collection and store an array of grades for each course.
+
+```js
+db.students.updateMany( {}, {$set: { grades: []}});
+```
+
+
+## Task 27: Use $elemMatch to query students enrolled in specific courses
+
+**Find students enrolled in CS101 and have the grade A.
+
+```js
+db.students.find( {enrolledCourses: { $eleMatch: { enrolledCourses:"CS101", grade: "A"}}});
+```
+
+
+## Task 28: Use $size operator to query students with exactly 2 courses enrolled
+
+**Query students who have enrolled in exactly two courses.
+
+```js
+db.students.find( {enrolledCourses: { $size: 2}});
+```
+
+
+## Task 29: Perform a text search for a course title
+
+**Use text indexing to search for the course Digital Electronics in the courses collection.
+
+```js
+db.courses.createIndex( {title: "text"});
+db.courses.find( {title: /Digital Electronics/});
+```
+
+
+## Task 30: Create a compound index on department and year
+
+**Create a compound index on the fields department and year for better querying performance.
+
+```js
+db.students.createIndex( {department: 1, year: 1});
+```
+
+
+## Task 31: Use $sort to order students by their roll number
+
+**Sort the students in ascending order of their roll number.
+
+```js
+db.students.find().sort( (rollNumber: 1));
+```
+
+
+## Task 32: Create a unique index on the roll number
+
+**Create a unique index to ensure that the roll numbers in the students collection are unique.
+
+```js
+db.students.createIndex( {rollNumber: 1} , {unique: true} );
+```
+
+
+## Task 33: Update the course name in the courses collection
+
+**Update the name of the course CS101 to Intro to Programming.
+
+```js
+db.courses.updateOne( { name: "CS101"}, { $set: {name: "Intro to Programing"}});
+```
+
+
+## Task 34: Create a backup of the CodingGitaStudents database
+
+**Use mongodump to back up the entire CodingGitaStudents database.
+
+```js
+mongodump --uri "mongodb://localhost:27017/codinggita"
+```
+
+
+## Task 35: Restore the CodingGitaStudents database from the backup
+
+**Use mongorestore to restore the database after a backup.
+
+```js
+mongorestore --uri "mongodb://localhost:27017/codinggita" dump/codinggita
+```
+
+
+## Task 36: Use $project to reshape data in aggregation
+
+**Project only the name and department of students using an aggregation query.
+
+```js
+db.students.aggregate([
+  {
+    $project: { name:1, department: 1; _id: 0 };
+  }
+]);
+```
+
+
+## Task 37: Use $unwind to deconstruct the courses array
+
+**Use $unwind to split the coursesEnrolled array into individual documents.
+
+```js
+db.students.aggregate([
+  {
+    $unwind: "$enrolledCourses";
+  };
+]);
+```
+
+
+## Task 38: Use $limit to retrieve only the first 3 students
+
+**Use $limit to limit the result to the first 3 students in the students collection.
